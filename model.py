@@ -62,13 +62,16 @@ def build_model(args):
     model.add(Conv2D(24, (3, 3), (2, 2), activation='elu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
-    model.add(Conv2D(36, (3, 3), (1, 2), activation='elu'))
+    model.add(Conv2D(36, (3, 3), (2, 2), activation='elu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(args.keep_prob))
+    
     model.add(Flatten())
-    model.add(Dense(100, activation='elu'))
+    model.add(Dense(1024, activation='elu'))
+
+    model.add(Dropout(args.keep_prob))
+
+    model.add(Dense(128, activation='elu'))
     model.add(Dense(50, activation='elu'))
-    model.add(Dense(10, activation='elu'))
     model.add(Dense(1))
     model.summary()
 
@@ -94,14 +97,6 @@ def train_model(model, args, X_train, X_valid, y_train, y_valid):
 
     model.save('model.h5')
 
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.legend(['Training','Validation'])
-    plt.title('loss')
-    plt.xlabel('Epoch')
-    plt.show()
-
-
 def s2b(s):
     """
     Converts a string to boolean value
@@ -117,7 +112,7 @@ def main():
     parser = argparse.ArgumentParser(description='Behavioral Cloning Training Program')
     parser.add_argument('-d', help='data directory',        dest='data_dir',          type=str,   default='data')
     parser.add_argument('-t', help='test size fraction',    dest='test_size',         type=float, default=0.2)
-    parser.add_argument('-k', help='drop out probability',  dest='keep_prob',         type=float, default=0.5)
+    parser.add_argument('-k', help='drop out probability',  dest='keep_prob',         type=float, default=0.25)
     parser.add_argument('-n', help='number of epochs',      dest='nb_epoch',          type=int,   default=1)
     parser.add_argument('-s', help='samples per epoch',     dest='samples_per_epoch', type=int,   default=10)
     parser.add_argument('-b', help='batch size',            dest='batch_size',        type=int,   default=40)
