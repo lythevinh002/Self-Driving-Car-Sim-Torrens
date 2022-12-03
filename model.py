@@ -62,7 +62,7 @@ def build_model(args):
     model.add(Conv2D(24, (3, 3), (2, 2), activation='elu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
-    model.add(Conv2D(36, (3, 3), (2, 2), activation='elu'))
+    model.add(Conv2D(36, (3, 3), (1, 2), activation='elu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(args.keep_prob))
     model.add(Flatten())
