@@ -26,9 +26,7 @@ def load_data(args):
 
     X = data_df[['center', 'left', 'right']].values
     y = data_df['steering'].values
-
     
-
     X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=args.test_size, random_state=0)
 
     return X_train, X_valid, y_train, y_valid
@@ -38,25 +36,9 @@ def build_model(args):
     """
     Modified NVIDIA model
     """
-    # model = Sequential()
-    # model.add(Cropping2D(cropping=((100, 0), (0, 0)), input_shape=INPUT_SHAPE))
-    # model.add(Lambda(lambda x: x/127.5-1.0, input_shape=INPUT_SHAPE))
-    # model.add(Conv2D(24, (5, 5), (2, 2), activation='elu'))
-    # model.add(MaxPooling2D(pool_size=(2, 2)))
-
-    # model.add(Conv2D(36, (5, 5), (2, 2), activation='elu'))
-    # model.add(MaxPooling2D(pool_size=(2, 2)))
-    # model.add(Dropout(args.keep_prob))
-    # model.add(Flatten())
-    # model.add(Dense(100, activation='elu'))
-    # model.add(Dense(50, activation='elu'))
-    # model.add(Dense(10, activation='elu'))
-    # model.add(Dense(1))
-    # model.summary()
-
-    # return model
 
     model = Sequential()
+    # We need Cropping to reduce the size of input but keep the focus point
     model.add(Cropping2D(cropping=((75, 25), (10, 10)), input_shape=INPUT_SHAPE))
     model.add(Lambda(lambda x: x/127.5-1.0, input_shape=INPUT_SHAPE))
     model.add(Conv2D(24, (3, 3), (2, 2), activation='elu'))
