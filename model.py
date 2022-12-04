@@ -22,8 +22,10 @@ def load_data(args):
     columns = ['center', 'left', 'right', 'steering', 'throttle', 'brake', 'speed']
     data_df = pd.read_csv(os.path.join(args.data_dir, 'driving_log.csv'), names=columns)
 
+    # Before starting anything, we need to redundant data
     data_df = balanceData(data_df, display=False)
 
+    # With the data that we have, we get center, left and right
     X = data_df[['center', 'left', 'right']].values
     y = data_df['steering'].values
     
@@ -71,7 +73,7 @@ def train_model(model, args, X_train, X_valid, y_train, y_valid):
     """
     Train the model
     """
-
+    # Depend on the needed, here we use MSE and learning rage = 0.0001
     model.compile(loss='mean_squared_error', optimizer=Adam(learning_rate=args.learning_rate))
 
     checkpoint = ModelCheckpoint('model.h5',
@@ -79,11 +81,12 @@ def train_model(model, args, X_train, X_valid, y_train, y_valid):
                                     verbose=0,
                                     save_best_only=args.save_best_only,
                                     mode='auto')
-                                    
+    
+    # We using history to capture the loss data of training and testing mode
     history = model.fit(batch_generator(args.data_dir, X_train, y_train, args.batch_size, True), steps_per_epoch=args.samples_per_epoch, epochs=args.nb_epoch, 
                 validation_data=batch_generator(args.data_dir, X_valid, y_valid, args.batch_size, True),callbacks=[checkpoint], validation_steps=args.samples_per_epoch, verbose=1)
     
-
+    # We gonna save the model
     model.save('model.h5')
 
 def s2b(s):

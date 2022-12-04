@@ -12,23 +12,28 @@ def balanceData(data,display=True):
     samplesPerBin = 500
     hist, bins = np.histogram(data['steering'], nBin)
     if display:
+        # calculate for the center
         center = (bins[:-1] + bins[1:]) * 0.5
 
     # Now we remove the redundant data
     
+    # We will save the index of the removed one
     removeindexList = []
     for j in range(nBin):
         binDataList = []
         for i in range(len(data['steering'])):
+            # if the data which here we said steering, stay in the range of bins, we save it to remove
             if data['steering'][i] >= bins[j] and data['steering'][i] <= bins[j + 1]:
                 binDataList.append(i)
+        # We shuffle it again
         binDataList = shuffle(binDataList)
+        # re assigned bin data
         binDataList = binDataList[samplesPerBin:]
+        # Now we make more removed one
         removeindexList.extend(binDataList)
  
-    print('Removed Images:', len(removeindexList))
+    # Now we drop the data
     data.drop(data.index[removeindexList], inplace=True)
-    print('Remaining Images:', len(data))
 
     if display:
         hist, _ = np.histogram(data['steering'], nBin)

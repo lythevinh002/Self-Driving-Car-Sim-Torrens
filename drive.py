@@ -102,7 +102,11 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    model = load_model("model_Full_2_races.h5")
+    # We need to load the model
+    # saved/Model/model_Full_2_races.h5 is our current best model
+    # Please turn off and turn on again when change track, to reduce the overwrite model from first track
+    
+    model = load_model(args.model)
     model.summary()
 
     if args.image_folder != '':
