@@ -27,6 +27,7 @@ def load_data(args):
     X = data_df[['center', 'left', 'right']].values
     y = data_df['steering'].values
     
+    # in here we make 20% for testing and 80% for training
     X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=args.test_size, random_state=0)
 
     return X_train, X_valid, y_train, y_valid
@@ -39,9 +40,15 @@ def build_model(args):
 
     model = Sequential()
     # We need Cropping to reduce the size of input but keep the focus point
+    #  used for cropping
+    #  75px from top to bottom
+    # 25px from bottom to top
     model.add(Cropping2D(cropping=((75, 25), (10, 10)), input_shape=INPUT_SHAPE))
+
     model.add(Lambda(lambda x: x/127.5-1.0, input_shape=INPUT_SHAPE))
     model.add(Conv2D(24, (3, 3), (2, 2), activation='elu'))
+    
+    # We need max pool after each hidden layer
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Conv2D(36, (3, 3), (2, 2), activation='elu'))
@@ -74,7 +81,7 @@ def train_model(model, args, X_train, X_valid, y_train, y_valid):
                                     mode='auto')
                                     
     history = model.fit(batch_generator(args.data_dir, X_train, y_train, args.batch_size, True), steps_per_epoch=args.samples_per_epoch, epochs=args.nb_epoch, 
-                validation_data=batch_generator(args.data_dir, X_train, y_train, args.batch_size, True),callbacks=[checkpoint], validation_steps=args.samples_per_epoch, verbose=1)
+                validation_data=batch_generator(args.data_dir, X_valid, y_valid, args.batch_size, True),callbacks=[checkpoint], validation_steps=args.samples_per_epoch, verbose=1)
     
 
     model.save('model.h5')

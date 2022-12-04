@@ -102,7 +102,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    model = load_model("model.h5")
+    model = load_model("model_Full_2_races.h5")
     model.summary()
 
     if args.image_folder != '':
